@@ -764,12 +764,12 @@ class Linear8bitLt(nn.Linear):
         for key in unexpected_copy:
             input_name = key[len(prefix) :]
             if input_name == "SCB":
-                if self.weight.SCB is None:
+                # if self.weight.SCB is None:
+                if self.weight.SCB is None and self.state.SCB is not None:
                     # buffers not yet initialized, can't access them directly without quantizing first
-                    raise RuntimeError(
-                        "Loading a quantized checkpoint into non-quantized Linear8bitLt is "
-                        "not supported. Please call module.cuda() before module.load_state_dict()",
-                    )
+                    # raise RuntimeError("Loading a quantized checkpoint into non-quantized Linear8bitLt is "
+                    #                    "not supported. Please call module.cuda() before module.load_state_dict()")
+                    self.weight.SCB = self.state.SCB
 
                 input_param = state_dict[key]
                 self.weight.SCB.copy_(input_param)
